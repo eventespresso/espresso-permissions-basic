@@ -3,7 +3,7 @@
 Plugin Name: Event Espresso - Permissions
 Plugin URI: http://www.eventespresso.com
 Description: Provides support for allowing members of the espreesso_event_admin role to administer events.
-Version: 1.4
+Version: 1.5
 Author: Seth Shoultes
 Author URI: http://www.eventespresso.com
 Copyright 2011  Seth Shoultes  (email : seth@eventespresso.com)
@@ -93,7 +93,7 @@ Revised: 05/11/2011
 include("includes/functions.php");
 //Define the version of the plugin
 function espresso_manager_version() {
-	return '1.4';
+	return '1.5';
 }
 define("ESPRESSO_MANAGER_VERSION", espresso_manager_version() );
 
