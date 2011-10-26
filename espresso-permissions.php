@@ -367,7 +367,7 @@ function espresso_permissions_config_mnu(){
                   </tr>
                   <tr>
                     <td><label for="espresso_manager_events">
-                        <?php _e('Event Listings Page','event_espresso'); ?>
+                        <?php _e('Event/Attendee Listings Page','event_espresso'); ?>
                       </label></td>
                     <td><?php echo select_input('espresso_manager_events', $values, $espresso_manager['espresso_manager_events']);?></td>
                   </tr>
