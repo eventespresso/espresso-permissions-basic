@@ -166,45 +166,6 @@ function espresso_manager_plugin_actions( $links, $file ){
 }
 add_filter( 'plugin_action_links', 'espresso_manager_plugin_actions', 10, 2 );
 
-//Returns information about the current roles
-//Overridden in pro
-if (!function_exists('espresso_role_data')) {
-	function espresso_role_data($type){
-		global $wpdb;
-		$sql = "SELECT
-		ID, user_email, user_login,
-		first_name.meta_value as first_name,
-		last_name.meta_value as last_name,
-		phone_number.meta_value as phone_number,
-		wp_capabilities.meta_value as wp_capabilities ";
-		$sql .= " FROM wp_users
-			JOIN wp_usermeta AS wp_capabilities ON wp_capabilities.user_id=ID
-				AND wp_capabilities.meta_key='wp_capabilities'
-			LEFT JOIN wp_usermeta AS first_name ON first_name.user_id=ID
-				AND first_name.meta_key='first_name'
-			LEFT JOIN wp_usermeta AS last_name ON last_name.user_id=ID
-				AND last_name.meta_key='last_name'
-			LEFT JOIN wp_usermeta AS phone_number ON phone_number.user_id=ID
-				AND phone_number.meta_key='phone_number' ";
-		$sql .= " WHERE ";
-		//$sql .= " wp_capabilities.meta_value LIKE '%administrator%' OR wp_capabilities.meta_value LIKE '%espresso_event_admin%' OR wp_capabilities.meta_value LIKE '%espresso_event_manager%' ";
-		//$sql .= " ORDER BY ID";
-	
-		switch($type){
-			case 'admin_count':
-				$sql .= " wp_capabilities.meta_value LIKE '%administrator%' ";
-				$wpdb->get_results($sql);
-				return $wpdb->num_rows;
-			break;
-			case 'event_admin_count':
-				$sql .= " wp_capabilities.meta_value LIKE '%espresso_event_admin%' ";
-				$wpdb->get_results($sql);
-				return $wpdb->num_rows;
-			break;
-		}
-	}
-}
-
 //Create pages
 //Core only
 function espresso_permissions_roles_mnu(){
@@ -341,7 +302,16 @@ function espresso_permissions_config_mnu(){
 								case 'espresso_event_admin':
 									$role_links[] = "<li><a href='users.php?role=$this_role'$class>$name</a><br />".__('Access to selected admin pages below and all events/attendees.', 'event_espresso');
 								break;
-								
+								case 'espresso_event_manager':
+									if (defined('ESPRESSO_MANAGER_PRO_VERSION')) {
+										$role_links[] = "<li><a href='users.php?role=$this_role'$class>$name</a><br />".__('Access to events/attendees created by the user of this role and the selected pages below.', 'event_espresso');
+									}
+								break;
+								case 'espresso_group_admin':
+									if (defined('ESPRESSO_MANAGER_PRO_VERSION')) {
+										$role_links[] = "<li><a href='users.php?role=$this_role'$class>$name</a><br />".__('Access to events/attendees created by the user of this role, the selected pages below, and any events/attendees within the locales/regions assigned to this user.', 'event_espresso');
+									}
+								break;
 							}
 						}
 
