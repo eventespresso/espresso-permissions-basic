@@ -112,6 +112,10 @@ function espresso_member_data($type=''){
 				return $role;
 			}
 		break;
+		default:
+			return $user;
+		break;
+			
 	}
 }
 
@@ -127,8 +131,6 @@ if (!function_exists('espresso_user_meta')) {
 		}
 	}
 }
-
-
 
 //Checks to see if this is the users event
 //Overridden in pro
@@ -445,7 +447,7 @@ function espresso_permissions_config_mnu(){
               <input name="reset_permissions" type="checkbox" value="true" />
             </p>
           </form>
-
+		<?php echo espresso_select_manager_form(); ?>
         </div>
       </div>
     </div>
