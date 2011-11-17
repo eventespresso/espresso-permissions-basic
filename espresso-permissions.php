@@ -248,7 +248,7 @@ function espresso_permissions_config_mnu(){
 
 	$values=array(
 		array('id'=>'administrator','text'=> __('Administrator','event_espresso')),
-		array('id'=>'espresso_event_admin','text'=> __('Event Admin','event_espresso')),
+		array('id'=>'espresso_event_admin','text'=> __('Master Admin','event_espresso')),
 	);
 	
 	//OVerride the values array if the pro version is installed
