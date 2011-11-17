@@ -49,6 +49,7 @@ function espresso_manager_install(){
 					'event_manager_staff'=>'Y',
 					'event_manager_create_post'=>'Y',
 					'event_manager_share_cats'=>'Y',
+					'can_accept_payments' => 'N',
 				);
 	add_option( 'espresso_manager_settings', $espresso_manager );
 	// add more capabilities to the subscriber role only for this plugin
@@ -234,6 +235,7 @@ function espresso_permissions_config_mnu(){
 		$espresso_manager['event_manager_staff'] = $_POST['event_manager_staff'];
 		$espresso_manager['event_manager_create_post'] = $_POST['event_manager_create_post'];
 		$espresso_manager['event_manager_share_cats'] = $_POST['event_manager_share_cats'];
+		$espresso_manager['can_accept_payments'] = $_POST['can_accept_payments'];
 
 		update_option( 'espresso_manager_settings', $espresso_manager);
 		add_action( 'admin_notices', 'espresso_manager_updated');
@@ -263,7 +265,7 @@ function espresso_permissions_config_mnu(){
   <div class="wrap">
     <div id="icon-options-event" class="icon32"> </div>
     <h2>
-      <?php _e('Event Espresso - Event Manager Permissions','event_espresso'); ?>
+      <?php _e('Event Espresso - Event Manager Permissions','event_espresso'); ?>  <?php if (function_exists('espresso_manager_pro_options')) {echo __('Pro', 'event_espresso') ;}?>
     </h2>
     <div id="poststuff" class="metabox-holder has-right-sidebar">
       <?php event_espresso_display_right_column ();?>
