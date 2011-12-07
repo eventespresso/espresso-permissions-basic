@@ -56,6 +56,7 @@ function espresso_manager_install(){
 	$result = add_role('espresso_event_admin', 'Espresso Master Admin', array(
 	    'read' => true, // True allows that capability
 	    'edit_posts' => false,
+		'espresso_user' => true,
 	    'espresso_group_admin' => false,
 	    'espresso_event_admin' => true,
 	    'espresso_event_manager' => true,
