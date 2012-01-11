@@ -1,10 +1,10 @@
 <?php
-add_filter( 'espresso_get_capabilities', 'espresso_remove_old_levels' );
-add_action( 'espresso_pre_components_form', 'espresso_message_no_edit_roles' );
-add_action( 'espresso_pre_edit_role_form', 'espresso_message_no_edit_roles' );
-add_action( 'espresso_pre_edit_roles_form', 'espresso_message_no_edit_roles' );
-add_action( 'espresso_pre_components_form', 'espresso_message_no_create_roles' );
-add_action( 'espresso_pre_new_role_form', 'espresso_message_no_create_roles' );
+add_filter( 'filter_hook_espresso_get_capabilities', 'espresso_remove_old_levels' );
+add_action( 'action_hook_espresso_pre_components_form', 'espresso_message_no_edit_roles' );
+add_action( 'action_hook_espresso_pre_edit_role_form', 'espresso_message_no_edit_roles' );
+add_action( 'action_hook_espresso_pre_edit_roles_form', 'espresso_message_no_edit_roles' );
+add_action( 'action_hook_espresso_pre_components_form', 'espresso_message_no_create_roles' );
+add_action( 'action_hook_espresso_pre_new_role_form', 'espresso_message_no_create_roles' );
 
 function espresso_get_capabilities() {
 	$capabilities = array();
@@ -12,7 +12,7 @@ function espresso_get_capabilities() {
 	$role_caps = espresso_get_role_capabilities();
 	$plugin_caps = espresso_get_additional_capabilities();
 	$capabilities = array_merge( $default_caps, $role_caps, $plugin_caps );
-	$capabilities = apply_filters( 'espresso_get_capabilities', $capabilities );
+	$capabilities = apply_filters( 'filter_hook_espresso_get_capabilities', $capabilities );
 	sort( $capabilities );
 	return array_unique( $capabilities );
 }
@@ -168,7 +168,7 @@ function espresso_list_users( $args = array() ) {
 		'echo' => true,
 	);
 	$r = wp_parse_args( $args, $defaults );
-	$r = apply_filters( 'espresso_list_users_args', $r );
+	$r = apply_filters( 'filter_hook_espresso_list_users_args', $r );
 	extract( $r, EXTR_SKIP );
 	$query = "SELECT * FROM $wpdb->users";
 	$query_where = array();
@@ -200,7 +200,7 @@ function espresso_list_users( $args = array() ) {
 				$output .= "<li class='$class'><a href='" . get_author_posts_url( $author->ID, $author->user_nicename ) . "' title='" . sprintf(__("Posts by %s"), esc_attr( $author->display_name ) ) . "'>$name</a></li>\n";
 		}
 	}
-	$output = apply_filters( 'espresso_list_users', $output );
+	$output = apply_filters( 'filter_hook_espresso_list_users', $output );
 	if ( !$echo )	return $output;
 	echo $output;
 }
@@ -228,7 +228,7 @@ function espresso_edit_roles_page() {
 }
 function espresso_new_role_default_capabilities() {
 	$capabilities = array( 'read' );
-	return apply_filters( 'espresso_new_role_default_capabilities', $capabilities );
+	return apply_filters( 'filter_hook_espresso_new_role_default_capabilities', $capabilities );
 }
 function espresso_message_no_create_roles() {
 	if ( !espresso_user_cap( 'create_roles' ) ) {

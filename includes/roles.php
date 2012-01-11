@@ -17,7 +17,7 @@ switch( $action ) {
 			break;
 		}else {
 			check_admin_referer( espresso_get_nonce( 'edit-roles' ) );
-			add_action( 'espresso_pre_edit_roles_form', 'espresso_message_roles_deleted' );
+			add_action( 'action_hook_espresso_pre_edit_roles_form', 'espresso_message_roles_deleted' );
 			foreach ( $delete_roles as $role ) {
 				$wp_user_search = new WP_User_Search( '', '', $role );
 				$change_users = $wp_user_search->get_results();
@@ -38,7 +38,7 @@ switch( $action ) {
 		break;
 	case 'delete' :
 		check_admin_referer( espresso_get_nonce( 'edit-roles' ) );
-		add_action( 'espresso_pre_edit_roles_form', 'espresso_message_role_deleted' );
+		add_action( 'action_hook_espresso_pre_edit_roles_form', 'espresso_message_role_deleted' );
 		$default_role = get_option( 'default_role' );
 		$role = $_GET['role'];
 		$wp_user_search = new WP_User_Search( '', '', $role );

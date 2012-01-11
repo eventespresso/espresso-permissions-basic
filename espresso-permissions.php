@@ -152,7 +152,7 @@ if (!function_exists('espresso_management_capability')) {
 	function espresso_management_capability( $default, $custom ) {
 		return $custom;
 	}
-	add_filter( 'espresso_management_capability', 'espresso_management_capability', 10, 3 );
+	add_filter( 'filter_hook_espresso_management_capability', 'espresso_management_capability', 10, 3 );
 }
 
 //Add a settings link to the Plugins page, so people can go straight from the plugin page to the settings page.

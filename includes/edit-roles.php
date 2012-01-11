@@ -22,7 +22,7 @@ if ( $_POST['edit-role-saved'] == 'Y' ) {
 <div class="wrap">
 	<h2><?php printf(__('Edit the %1$s role', 'event-espresso'), $role->name ); ?></h2>
 	<?php if ( $role_updated ) espresso_admin_message( '', __('Role updated.', 'event-espresso') ); ?>
-	<?php do_action( 'espresso_pre_edit_role_form' ); //Available pre-form hook for displaying messages. ?>
+	<?php do_action( 'action_hook_espresso_pre_edit_role_form' ); //Available pre-form hook for displaying messages. ?>
 	<div id="poststuff">
 		<form name="form0" method="post" action="<?php echo admin_url( esc_url( "admin.php?page=roles&amp;action=edit&amp;role={$role->name}" ) ); ?>" style="border:none;background:transparent;">
 			<?php wp_nonce_field( espresso_get_nonce( 'edit-roles' ) ); ?>

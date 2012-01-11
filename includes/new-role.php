@@ -16,7 +16,7 @@ if ( $_POST['new-role-submit'] == 'Y' ) {
 <div class="wrap">
 	<h2><?php _e('Add a new user role', 'event_espresso'); ?></h2>
 	<?php if ( $new_role_added ) espresso_admin_message( '', sprintf( __('The %1$s role has been created.', 'event_espresso'), $_POST['role-name'] ) ); ?>
-	<?php do_action( 'espresso_pre_new_role_form' ); // Available action hook for displaying messages. ?>
+	<?php do_action( 'action_hook_espresso_pre_new_role_form' ); // Available action hook for displaying messages. ?>
 	<div id="poststuff">
 		<form name="form0" method="post" action="<?php echo admin_url( "admin.php?page=roles&amp;action=new" ); ?>" style="border:none;background:transparent;">
 			<?php wp_nonce_field( espresso_get_nonce( 'new-role' ) ); ?>

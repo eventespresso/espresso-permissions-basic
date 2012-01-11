@@ -41,7 +41,7 @@ ksort( $roles_loop_array );
 ?>
 <div class="wrap">
 	<h2><?php echo $title; ?></h2>
-	<?php do_action( 'espresso_pre_edit_roles_form' );?>
+	<?php do_action( 'action_hook_espresso_pre_edit_roles_form' );?>
 	<div id="poststuff">
 		<form id="roles" action="<?php echo $current_page; ?>" method="post">
 			<?php wp_nonce_field( espresso_get_nonce( 'edit-roles' ) ); ?>
