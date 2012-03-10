@@ -73,10 +73,18 @@ function espresso_permissions_init() {
 	if (espresso_is_admin()) {
 		add_filter('filter_hook_espresso_event_editor_email_attendees_class', 'espresso_event_editor_email_attendees_class');
 		add_action('action_hook_espresso_event_editor_overview_add', 'espresso_event_editor_overview_add');
+		add_filter('filter_hook_espresso_category_list_sql', 'espresso_permissions_category_list_sql_filter', 20);
 	}
 }
 
 add_action('init', 'espresso_permissions_init', 10);
+
+function espresso_permissions_category_list_sql_filter($sql) {
+	if (espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin') {
+		$sql .= " JOIN $wpdb->users u on u.ID = c.wp_user WHERE c.wp_user = " . espresso_member_data('id');
+	}
+	return $sql;
+}
 
 function espresso_event_editor_email_attendees_class($class) {
 	return $class . " misc-pub-section-last";
@@ -127,7 +135,9 @@ function espresso_add_permissions_functions() {
 	}
 
 }
+
 add_action('plugins_loaded', 'espresso_add_permissions_functions', 20);
+
 //Returns the id, capability, and role of a user
 //Core only
 function espresso_member_data($type = '') {
@@ -243,6 +253,24 @@ function espresso_permissions_newroles_mnu() {
 	<?php
 }
 
+//Permissions
+function espresso_permissions_add_to_admin_menu($espresso_manager) {
+	global $org_options;
+	add_submenu_page('events', __('Event Espresso - Permissions Settings', 'event_espresso'), '<span class="ee_menu_group"  onclick="return false;">' . __('Permissions', 'event_espresso') . '</span>', 'administrator', 'espresso_permissions', 'espresso_permissions_config_mnu');
+
+	//Permissions settings
+	add_submenu_page('events', __('Event Espresso - Event Manager Permissions', 'event_espresso'), __('Settings', 'event_espresso'), 'administrator', 'espresso_permissions', 'espresso_permissions_config_mnu');
+	add_submenu_page('events', __('Event Espresso - Event Manager Roles', 'event_espresso'), __('User Roles', 'event_espresso'), 'administrator', 'roles', 'espresso_permissions_roles_mnu');
+	if ($org_options['use_venue_manager'] == 'Y' && function_exists('espresso_permissions_user_groups')) {
+		if (espresso_member_data('role') == "administrator") {
+			add_submenu_page('events', __('Event Espresso - Locales/Regions', 'event_espresso'), __('Locales/Regions', 'event_espresso'), apply_filters('filter_hook_espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_venue_manager']), 'event_locales', 'event_espresso_locale_config_mnu');
+		}
+		add_submenu_page('events', __('Event Espresso - Regional Managers', 'event_espresso'), __('Regional Managers', 'event_espresso'), 'administrator', 'event_groups', 'espresso_permissions_user_groups');
+	}
+}
+
+add_action('action_hook_espresso_add_new_submenu_to_group_settings', 'espresso_permissions_add_to_admin_menu', 40);
+
 function espresso_permissions_config_mnu() {
 
 	global $wpdb, $espresso_manager, $wp_roles;
@@ -305,13 +333,15 @@ function espresso_permissions_config_mnu() {
 			<div id="icon-options-event" class="icon32"> </div>
 			<h2>
 				<?php _e('Event Espresso - Event Manager Permissions', 'event_espresso'); ?>  <?php
-				if (function_exists('espresso_manager_pro_options')) {
-					echo __('Pro', 'event_espresso');
-				}
+			if (function_exists('espresso_manager_pro_options')) {
+				echo __('Pro', 'event_espresso');
+			}
 				?>
 			</h2>
 			<div id="poststuff" class="metabox-holder has-right-sidebar">
-				<?php event_espresso_display_right_column(); ?>
+				<div id="side-info-column" class="inner-sidebar">
+					<?php do_meta_boxes('event-espresso_page_espresso_permissions', 'side', null); ?>
+				</div>
 				<div id="post-body">
 					<div id="post-body-content">
 						<div class="postbox">
