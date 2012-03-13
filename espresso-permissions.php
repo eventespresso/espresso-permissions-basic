@@ -530,3 +530,11 @@ function espresso_permissions_config_mnu() {
 	<?php
 }
 
+function espresso_permissions_filter_wp_user_id($wp_user_id) {
+	if (espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin') {
+		$wp_user_id = espresso_member_data('id');
+	}
+	return $wp_user_id;
+}
+
+add_filter('filter_hook_espresso_get_user_id', 'espresso_permissions_filter_wp_user_id', 10);
