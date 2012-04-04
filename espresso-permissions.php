@@ -521,7 +521,11 @@ function espresso_permissions_config_mnu() {
 								<input name="reset_permissions" type="checkbox" value="true" />
 							</p>
 						</form>
-						<?php echo espresso_select_manager_form(); ?>
+						<?php 
+						if (function_exists('espresso_manager_pro_options')) {
+							echo espresso_select_manager_form();
+						}
+						?>
 					</div>
 				</div>
 			</div>
