@@ -181,7 +181,7 @@ if (!function_exists('espresso_user_meta')) {
 		$user = new WP_User($user_id);
 		//print_r($user);
 		//echo array_key_exists($key, $user);
-		if (array_key_exists($key, $user)) {
+		if (array_key_exists($key, $user->data)) {
 			return esc_attr($user->$key);
 		}
 	}
