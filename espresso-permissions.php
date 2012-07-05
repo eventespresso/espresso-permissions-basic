@@ -68,6 +68,7 @@ function espresso_manager_install(){
 					'espresso_manager_support' => "administrator",
 					'espresso_manager_venue_manager' => "administrator",
 					'espresso_manager_personnel_manager' => "administrator",
+					'espresso_manager_ticketing' => "administrator",
 					'event_manager_approval' => "N",
 					'event_manager_venue'=>'Y',
 					'event_manager_staff'=>'Y',
