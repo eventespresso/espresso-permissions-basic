@@ -69,6 +69,7 @@ function espresso_manager_install(){
 					'espresso_manager_venue_manager' => "administrator",
 					'espresso_manager_personnel_manager' => "administrator",
 					'espresso_manager_ticketing' => "administrator",
+					'espresso_manager_seating' => "administrator",
 					'event_manager_approval' => "N",
 					'event_manager_venue'=>'Y',
 					'event_manager_staff'=>'Y',
@@ -307,6 +308,7 @@ function espresso_permissions_config_mnu(){
 		$espresso_manager['espresso_manager_members']           = isset( $_POST['espresso_manager_members'] ) ? $_POST['espresso_manager_members'] : '';
 		$espresso_manager['espresso_manager_calendar']          = isset( $_POST['espresso_manager_calendar'] ) ? $_POST['espresso_manager_calendar'] : '';
 		$espresso_manager['espresso_manager_ticketing']          = isset( $_POST['espresso_manager_ticketing'] ) ? $_POST['espresso_manager_ticketing'] : '';
+		$espresso_manager['espresso_manager_seating']          = isset( $_POST['espresso_manager_seating'] ) ? $_POST['espresso_manager_seating'] : '';
 		$espresso_manager['espresso_manager_social']            = isset( $_POST['espresso_manager_social'] ) ? $_POST['espresso_manager_social'] : '';
 		$espresso_manager['espresso_manager_addons']            = isset( $_POST['espresso_manager_addons'] ) ? $_POST['espresso_manager_addons'] : '';
 		$espresso_manager['espresso_manager_support']           = isset( $_POST['espresso_manager_support'] ) ? $_POST['espresso_manager_support'] : '';
@@ -502,6 +504,12 @@ function espresso_permissions_config_mnu(){
                         <?php _e('Ticket Templates','event_espresso'); ?>
                       </label></td>
                     <td><?php echo select_input('espresso_manager_ticketing', $values, $espresso_manager['espresso_manager_ticketing']);?></td>
+                  </tr>
+				  <tr>
+                    <td><label for="espresso_manager_seating">
+                        <?php _e('Seating Chart','event_espresso'); ?>
+                      </label></td>
+                    <td><?php echo select_input('espresso_manager_seating', $values, $espresso_manager['espresso_manager_seating']);?></td>
                   </tr>
                   <tr>
                     <td><label for="espresso_manager_social">
