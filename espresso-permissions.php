@@ -213,8 +213,8 @@ if (!function_exists('espresso_user_meta')) {
 		//echo "<pre>".print_r($user,true)."</pre>";
 		//print_r($user->data);
 		//echo array_key_exists($key, $user);
-		
-		if (array_key_exists($key, $user->data)) {
+		//echo $user->data->ID;
+		if ($user->data->ID >0 && array_key_exists($key, $user->data)) {
 			return esc_attr($user->$key);
 		}
 	}
