@@ -3,7 +3,7 @@
 Plugin Name: Event Espresso - Permissions
 Plugin URI: http://www.eventespresso.com
 Description: Provides support for allowing members of the espreesso_event_admin role to administer events.
-Version: 1.5.1
+Version: 1.5.2
 Author: Event Espresso
 Author URI: http://www.eventespresso.com
 Copyright 2011  Event Espresso  (email : support@eventespresso.com)
@@ -35,7 +35,7 @@ function ee_permissions_basic_load_pue_update() {
 include("includes/functions.php");
 //Define the version of the plugin
 function espresso_manager_version() {
-	return '1.5.1';
+	return '1.5.2';
 }
 define("ESPRESSO_MANAGER_VERSION", espresso_manager_version() );
 
@@ -68,6 +68,8 @@ function espresso_manager_install(){
 					'espresso_manager_support' => "administrator",
 					'espresso_manager_venue_manager' => "administrator",
 					'espresso_manager_personnel_manager' => "administrator",
+					'espresso_manager_ticketing' => "administrator",
+					'espresso_manager_seating' => "administrator",
 					'event_manager_approval' => "N",
 					'event_manager_venue'=>'Y',
 					'event_manager_staff'=>'Y',
@@ -77,11 +79,11 @@ function espresso_manager_install(){
 				);
 	add_option( 'espresso_manager_settings', $espresso_manager );
 	// add more capabilities to the subscriber role only for this plugin
-	$result = add_role('espresso_event_manager', 'Espresso Event Manager', array(
+	$result = add_role('espresso_event_admin', 'Espresso Master Admin', array(
 	    'read' => true, // True allows that capability
 	    'edit_posts' => false,
 	    'espresso_group_admin' => false,
-	    'espresso_event_admin' => false,
+	    'espresso_event_admin' => true,
 	    'espresso_event_manager' => true,
 	    'delete_posts' => false, // Use false to explicitly deny
 	));
@@ -103,8 +105,7 @@ function espresso_permissions_run(){
 		function espresso_is_admin(){
 			if( espresso_member_data('role')=='espresso_event_admin' || current_user_can('administrator') ){
 				return true;
-			} 
-			return false;
+			}
 		}	
 	}
 	
@@ -113,8 +114,7 @@ function espresso_permissions_run(){
 	if (!function_exists('espresso_is_my_event')) {
 		function espresso_is_my_event($event_id){
 			global $wpdb;
-			global $current_user;
-			if( current_user_can('espresso_group_admin') || current_user_can('espresso_event_admin') || current_user_can('administrator') ){
+			if( current_user_can('administrator') || espresso_member_data('role')=='espresso_event_admin'){
 				return true;
 			}
 		}
@@ -150,8 +150,8 @@ function espresso_permissions_run(){
 					$wpdb->get_results($sql);
 					return $wpdb->num_rows;
 				break;
-				case 'event_manager_count':
-					$sql .= " wp_capabilities.meta_value LIKE '%espresso_event_manager%' ";
+				case 'event_admin_count':
+					$sql .= " wp_capabilities.meta_value LIKE '%espresso_event_admin%' ";
 					$wpdb->get_results($sql);
 					return $wpdb->num_rows;
 				break;
@@ -165,7 +165,7 @@ function espresso_permissions_run(){
 //Overridden in pro
 if (!function_exists('espresso_can_view_event')) {
 	function espresso_can_view_event($event_id){
-		if ( current_user_can('espresso_event_manager')==true || espresso_is_my_event($event_id) ){
+		if ( current_user_can('espresso_event_admin')==true || espresso_is_my_event($event_id) ){
 			return true;
 		}
 	}	
@@ -213,8 +213,8 @@ if (!function_exists('espresso_user_meta')) {
 		//echo "<pre>".print_r($user,true)."</pre>";
 		//print_r($user->data);
 		//echo array_key_exists($key, $user);
-		
-		if (array_key_exists($key, $user->data)) {
+		//echo $user->data->ID;
+		if ($user->data->ID >0 && array_key_exists($key, $user->data)) {
 			return esc_attr($user->$key);
 		}
 	}
@@ -308,6 +308,7 @@ function espresso_permissions_config_mnu(){
 		$espresso_manager['espresso_manager_members']           = isset( $_POST['espresso_manager_members'] ) ? $_POST['espresso_manager_members'] : '';
 		$espresso_manager['espresso_manager_calendar']          = isset( $_POST['espresso_manager_calendar'] ) ? $_POST['espresso_manager_calendar'] : '';
 		$espresso_manager['espresso_manager_ticketing']          = isset( $_POST['espresso_manager_ticketing'] ) ? $_POST['espresso_manager_ticketing'] : '';
+		$espresso_manager['espresso_manager_seating']          = isset( $_POST['espresso_manager_seating'] ) ? $_POST['espresso_manager_seating'] : '';
 		$espresso_manager['espresso_manager_social']            = isset( $_POST['espresso_manager_social'] ) ? $_POST['espresso_manager_social'] : '';
 		$espresso_manager['espresso_manager_addons']            = isset( $_POST['espresso_manager_addons'] ) ? $_POST['espresso_manager_addons'] : '';
 		$espresso_manager['espresso_manager_support']           = isset( $_POST['espresso_manager_support'] ) ? $_POST['espresso_manager_support'] : '';
@@ -331,7 +332,7 @@ function espresso_permissions_config_mnu(){
 
 	$values=array(
 		array('id'=>'administrator','text'=> __('Administrator','event_espresso')),
-		array('id'=>'espresso_event_manager','text'=> __('Event Manager','event_espresso')),
+		array('id'=>'espresso_event_admin','text'=> __('Event Admin','event_espresso')),
 	);
 	
 	//OVerride the values array if the pro version is installed
@@ -387,8 +388,8 @@ function espresso_permissions_config_mnu(){
 								case 'administrator':
 									$role_links[] = "<li><a href='users.php?role=$this_role'$class>$name</a><br />".__('Access to all admin pages and all events/attendees.', 'event_espresso');
 								break;
-								case 'espresso_event_manager':
-									$role_links[] = "<li><a href='users.php?role=$this_role'$class>$name</a><br />".__('Access to selected admin pages below and personal  events/attendees.', 'event_espresso');
+								case 'espresso_event_admin':
+									$role_links[] = "<li><a href='users.php?role=$this_role'$class>$name</a><br />".__('Access to selected admin pages below and all events/attendees.', 'event_espresso');
 								break;
 								
 							}
@@ -397,8 +398,8 @@ function espresso_permissions_config_mnu(){
 									case 'espresso_group_admin':
 										$role_links[] = "<li><a href='users.php?role=$this_role'$class>$name</a><br />".__('Access to selected admin pages below, personal events/attendees, and any events/attendees that are located within the assigned locale/region.', 'event_espresso');
 									break;
-									case 'espresso_event_admin':
-										$role_links[] = "<li><a href='users.php?role=$this_role'$class>$name</a><br />".__('Access to selected admin pages below and all events/attendees.', 'event_espresso');
+									case 'espresso_event_manager':
+										$role_links[] = "<li><a href='users.php?role=$this_role'$class>$name</a><br />".__('Access to selected admin pages below and personal events/attendees.', 'event_espresso');
 									break;
 								}
 							}
@@ -503,6 +504,12 @@ function espresso_permissions_config_mnu(){
                         <?php _e('Ticket Templates','event_espresso'); ?>
                       </label></td>
                     <td><?php echo select_input('espresso_manager_ticketing', $values, $espresso_manager['espresso_manager_ticketing']);?></td>
+                  </tr>
+				  <tr>
+                    <td><label for="espresso_manager_seating">
+                        <?php _e('Seating Chart','event_espresso'); ?>
+                      </label></td>
+                    <td><?php echo select_input('espresso_manager_seating', $values, $espresso_manager['espresso_manager_seating']);?></td>
                   </tr>
                   <tr>
                     <td><label for="espresso_manager_social">
