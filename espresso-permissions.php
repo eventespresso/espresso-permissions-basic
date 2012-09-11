@@ -103,7 +103,7 @@ function espresso_permissions_run(){
     
 	if (!function_exists('espresso_is_admin')) {
 		function espresso_is_admin(){
-			if( espresso_member_data('role')=='espresso_event_admin' || current_user_can('administrator') ){
+			if( current_user_can('espresso_event_admin') || current_user_can('administrator') || current_user_can('espresso_group_admin') ){
 				return true;
 			}
 		}	
