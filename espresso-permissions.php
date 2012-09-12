@@ -282,6 +282,7 @@ function espresso_rp_basic_get_question_groups_for_event_where($where, $existing
 
 function espresso_rp_basic_get_question_groups_for_event_groups( $event_question_groups, $existing_question_groups ) {
 	$current_user_groups = array();
+	$other_user_groups = array();
 	$checked_groups = array();
 	$has_system_group = false;
 	$current_user_id = get_current_user_id();
@@ -290,26 +291,34 @@ function espresso_rp_basic_get_question_groups_for_event_groups( $event_question
 	foreach ( $event_question_groups as $question_group ) {
 		if ( $question_group->system_group == 1 && $question_group->wp_user == $current_user_id ) {
 			$current_user_groups[] = $question_group;
+			$has_system_group = true;
 			continue;
 		}
 
-		if ( $question_group->system_group == 1 && $question_group->wp_user != $current_user_id )
+		if ( $question_group->system_group == 1 && $question_group->wp_user != $current_user_id ) {
+			//TODO: note.  This is assuming that ONLY one system group is currently in place for EE (personal).  If more system groups are added down the road then this has to be modified (3.2 will have changes to allow for more possible system groups).
+			if ( $has_system_group ) continue;
+			$other_user_groups[] = $question_group;
 			$has_system_group = true;
+			continue;
+		}
 
 		$checked_groups[] = $question_group;
 	}
 
+	if ( !empty($current_user_groups) && $has_system_group ) {
+		$other_user_groups = $current_user_groups;
+	}
+
+	$checked_groups = ( $has_system_group ) ? array_merge($other_user_groups, $checked_groups ) : $checked_groups;
+
 	//this is a fringe case... shouldn't ever be needed but well you know how it goes...
 	if ( !$has_system_group ) {
 		//hth did the event get saved/displayed without at least one system question group?  We better add one into the array.
-		if ( !empty($current_user_groups) ) {
-			$checked_groups = array_merge($current_user_groups, $checked_groups);
-		} else {
-			global $wpdb;
-			$sql = "SELECT qg.* FROM " . EVENTS_QST_GROUP_TABLE . " AS qg WHERE qg.system_group = '1' AND ( qg.wp_user = '0' or qg.wp_user = '1' ) ";
-			$default_groups = $wpdb->get_results($wpdb->prepare($sql) );
-			$checked_groups = array_merge($default_groups, $checked_groups);
-		}
+		global $wpdb;
+		$sql = "SELECT qg.* FROM " . EVENTS_QST_GROUP_TABLE . " AS qg WHERE qg.system_group = '1' AND ( qg.wp_user = '0' or qg.wp_user = '1' ) ";
+		$default_groups = $wpdb->get_results($wpdb->prepare($sql) );
+		$checked_groups = array_merge($default_groups, $checked_groups);
 	}
 
 	return $checked_groups;
