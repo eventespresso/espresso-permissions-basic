@@ -281,14 +281,14 @@ function espresso_rp_basic_get_question_groups_for_event_where($where, $existing
 }
 
 function espresso_rp_basic_get_question_groups_for_event_groups( $event_question_groups, $existing_question_groups ) {
-	$current_user_group = array();
+	$current_user_groups = array();
+	$checked_groups = array();
 	$has_system_group = false;
 	$current_user_id = get_current_user_id();
 	
 	//basically we want to make sure we're just displaying the system group for the EVENT user (otherwise we'll have duplicates. Also, let's make sure there IS a system group (if there isn't then we need to display the default).
 	foreach ( $event_question_groups as $question_group ) {
 		if ( $question_group->system_group == 1 && $question_group->wp_user == $current_user_id ) {
-			$has_system_group = true;
 			$current_user_groups[] = $question_group;
 			continue;
 		}
@@ -306,7 +306,7 @@ function espresso_rp_basic_get_question_groups_for_event_groups( $event_question
 			$checked_groups = array_merge($current_user_groups, $checked_groups);
 		} else {
 			global $wpdb;
-			$sql = "SELECT aq.* FROM " . EVENTS_QST_GROUP_TABLE . " AS qg WHERE qg.system_group = '1' AND ( qg.wp_user = '0' or qg.wp_user = '1' ) ";
+			$sql = "SELECT qg.* FROM " . EVENTS_QST_GROUP_TABLE . " AS qg WHERE qg.system_group = '1' AND ( qg.wp_user = '0' or qg.wp_user = '1' ) ";
 			$default_groups = $wpdb->get_results($wpdb->prepare($sql) );
 			$checked_groups = array_merge($default_groups, $checked_groups);
 		}
