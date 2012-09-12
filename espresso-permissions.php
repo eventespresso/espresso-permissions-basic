@@ -274,7 +274,7 @@ function espresso_rp_basic_get_question_groups_for_event_where($where, $existing
 
 	//if we've got existing $questions then we want to make sure we're pulling them in.
 	if ( !empty($existing_question_groups) ) {
-		$modified_where .= " OR qg.id IN (  " . implode( ',', $question_groups ) . " ) ";
+		$modified_where .= " OR qg.id IN (  " . implode( ',', $existing_question_groups ) . " ) ";
 	}
 
 	return $modified_where;
