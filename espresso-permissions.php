@@ -220,8 +220,103 @@ if (!function_exists('espresso_user_meta')) {
 	}
 }
 
+/**  ADDED BY DARREN  **/
+/* These filters are for hooking R&P into the questions/question groups management. They get removed and modified by R&P Pro */
+add_filter('espresso_get_user_question_groups_where', 'espresso_rp_basic_question_groups_where', 10, 3);
+add_filter('espresso_get_user_question_groups_groups', 'espresso_rp_basic_question_groups_groups', 10, 3);
+add_filter('espresso_get_user_questions_for_group', 'espresso_rp_basic_get_user_questions_for_group', 10, 3);
+//questions
+add_filter('espresso_get_user_questions_where', 'espresso_rp_basic_get_user_questions_where', 10, 3);
+add_filter('espresso_get_user_questions_questions', 'espresso_rp_basic_get_user_questions_questions', 10, 3);
+add_filter('espresso_get_question_groups_for_event_where', 'espresso_rp_basic_get_question_groups_for_event_where', 10, 2);
+add_filter('espresso_get_question_groups_for_event_groups', 'espresso_rp_basic_get_question_groups_for_event_groups', 10, 2);
 
+function espresso_rp_basic_question_groups_where($where, $user_id, $num) {
+	$modified_where = " WHERE qg.wp_user = '" . $user_id . "' ";
 
+	if ( espresso_is_admin() && !$num ) {
+		$where = !isset($_REQUEST['all']) ? $modified_where : "";
+	} else {
+		$where = $modified_where;
+	}
+
+	return $where;
+}
+
+//currently doing nothing with the filter.  Just a placeholder for now.
+function espresso_rp_basic_question_groups_groups($groups, $user_id, $num) {
+	return $groups;
+}
+
+function espresso_rp_basic_get_user_questions_for_group( $where, $group_id, $user_id ) {
+	$where .= " AND qg.wp_user = '" . $user_id . "' ";
+	return $where;
+}
+
+function espresso_rp_basic_get_user_questions_where( $where, $user_id, $num ) {
+	$modified_where = " WHERE q.wp_user = '" . $user_id . "' ";
+	if ( espresso_is_admin() && !$num ) {
+		$where = !isset($_REQUEST['all']) ? $modified_where : "";
+	} else {
+		$where = $modified_where;
+	}
+
+	return $where;
+}
+
+//currently just a placeholder
+function espresso_rp_basic_get_user_questions_questions( $questions, $user_id, $num ) {
+	return $questions;
+}
+
+function espresso_rp_basic_get_question_groups_for_event_where($where, $existing_question_groups) {
+	$modified_where = " WHERE qg.wp_user = '" . get_current_user_id() . "' ";
+
+	//if we've got existing $questions then we want to make sure we're pulling them in.
+	if ( !empty($existing_question_groups) ) {
+		$modified_where .= " OR qg.id IN (  " . implode( ',', $question_groups ) . " ) ";
+	}
+
+	return $modified_where;
+}
+
+function espresso_rp_basic_get_question_groups_for_event_groups( $event_question_groups, $existing_question_groups ) {
+	$current_user_group = array();
+	$has_system_group = false;
+	$current_user_id = get_current_user_id();
+	
+	//basically we want to make sure we're just displaying the system group for the EVENT user (otherwise we'll have duplicates. Also, let's make sure there IS a system group (if there isn't then we need to display the default).
+	foreach ( $event_question_groups as $question_group ) {
+		if ( $question_group->system_group == 1 && $question_group->wp_user == $current_user_id ) {
+			$has_system_group = true;
+			$current_user_groups[] = $question_group;
+			continue;
+		}
+
+		if ( $question_group->system_group == 1 && $question_group->wp_user != $current_user_id )
+			$has_system_group = true;
+
+		$checked_groups[] = $question_group;
+	}
+
+	//this is a fringe case... shouldn't ever be needed but well you know how it goes...
+	if ( !$has_system_group ) {
+		//hth did the event get saved/displayed without at least one system question group?  We better add one into the array.
+		if ( !empty($current_user_groups) ) {
+			$checked_groups = array_merge($current_user_groups, $checked_groups);
+		} else {
+			global $wpdb;
+			$sql = "SELECT aq.* FROM " . EVENTS_QST_GROUP_TABLE . " AS qg WHERE qg.system_group = '1' AND ( qg.wp_user = '0' or qg.wp_user = '1' ) ";
+			$default_groups = $wpdb->get_results($wpdb->prepare($sql) );
+			$checked_groups = array_merge($default_groups, $checked_groups);
+		}
+	}
+
+	return $checked_groups;
+}
+//todo left off here.  Need to check the final query to make sure that there are no duplicate system groups (and possibly make sure there is at least ONE system group?) If there aren't any system groups then we need to get the defaults and add them.
+
+/** END ADDED BY DARREN **/
 
 
 //This function is previously declared in functions/main.php. Credit goes to Justin Tadlock (http://justintadlock.com/archives/2009/09/18/custom-capabilities-in-plugins-and-themes)
