@@ -87,6 +87,12 @@ function espresso_manager_install(){
 	    'espresso_event_manager' => true,
 	    'delete_posts' => false, // Use false to explicitly deny
 	));
+
+	//we need to make sure administrator gets all new caps
+	$role = get_role('administrator');
+	$role->add_cap('espresso_group_admin');
+	$role->add_cap('espresso_event_admin');
+	$role->add_cap('espresso_event_manager');
 }
 register_activation_hook(__FILE__,'espresso_manager_install');
 
@@ -103,7 +109,7 @@ function espresso_permissions_run(){
     
 	if (!function_exists('espresso_is_admin')) {
 		function espresso_is_admin(){
-			if( espresso_member_data('role')=='espresso_event_admin' || current_user_can('administrator') ){
+			if( current_user_can('espresso_event_admin') || current_user_can('administrator') || current_user_can('espresso_group_admin') ){
 				return true;
 			}
 		}	
@@ -220,8 +226,112 @@ if (!function_exists('espresso_user_meta')) {
 	}
 }
 
+/**  ADDED BY DARREN  **/
+/* These filters are for hooking R&P into the questions/question groups management. They get removed and modified by R&P Pro */
+add_filter('espresso_get_user_question_groups_where', 'espresso_rp_basic_question_groups_where', 10, 3);
+add_filter('espresso_get_user_question_groups_groups', 'espresso_rp_basic_question_groups_groups', 10, 3);
+add_filter('espresso_get_user_questions_for_group', 'espresso_rp_basic_get_user_questions_for_group', 10, 3);
+//questions
+add_filter('espresso_get_user_questions_where', 'espresso_rp_basic_get_user_questions_where', 10, 3);
+add_filter('espresso_get_user_questions_questions', 'espresso_rp_basic_get_user_questions_questions', 10, 3);
+add_filter('espresso_get_question_groups_for_event_where', 'espresso_rp_basic_get_question_groups_for_event_where', 10, 2);
+add_filter('espresso_get_question_groups_for_event_groups', 'espresso_rp_basic_get_question_groups_for_event_groups', 10, 2);
 
+function espresso_rp_basic_question_groups_where($where, $user_id, $num) {
+	$modified_where = " WHERE qg.wp_user = '" . $user_id . "' ";
 
+	if ( espresso_is_admin() && !$num ) {
+		$where = !isset($_REQUEST['all']) ? $modified_where : "";
+	} else {
+		$where = $modified_where;
+	}
+
+	return $where;
+}
+
+//currently doing nothing with the filter.  Just a placeholder for now.
+function espresso_rp_basic_question_groups_groups($groups, $user_id, $num) {
+	return $groups;
+}
+
+function espresso_rp_basic_get_user_questions_for_group( $where, $group_id, $user_id ) {
+	$where .= " AND qg.wp_user = '" . $user_id . "' ";
+	return $where;
+}
+
+function espresso_rp_basic_get_user_questions_where( $where, $user_id, $num ) {
+	$modified_where = " WHERE q.wp_user = '" . $user_id . "' ";
+	if ( espresso_is_admin() && !$num ) {
+		$where = !isset($_REQUEST['all']) ? $modified_where : "";
+	} else {
+		$where = $modified_where;
+	}
+
+	return $where;
+}
+
+//currently just a placeholder
+function espresso_rp_basic_get_user_questions_questions( $questions, $user_id, $num ) {
+	return $questions;
+}
+
+function espresso_rp_basic_get_question_groups_for_event_where($where, $existing_question_groups) {
+	$modified_where = " WHERE qg.wp_user = '" . get_current_user_id() . "' ";
+
+	//if we've got existing $questions then we want to make sure we're pulling them in.
+	if ( !empty($existing_question_groups) ) {
+		$modified_where .= " OR qg.id IN (  " . implode( ',', $existing_question_groups ) . " ) ";
+	}
+
+	return $modified_where;
+}
+
+function espresso_rp_basic_get_question_groups_for_event_groups( $event_question_groups, $existing_question_groups ) {
+	$current_user_groups = array();
+	$other_user_groups = array();
+	$checked_groups = array();
+	$has_system_group = false;
+	$current_user_id = get_current_user_id();
+	
+	//basically we want to make sure we're just displaying the system group for the EVENT user (otherwise we'll have duplicates. Also, let's make sure there IS a system group (if there isn't then we need to display the default).
+	foreach ( $event_question_groups as $question_group ) {
+		if ( $question_group->system_group == 1 && $question_group->wp_user == $current_user_id ) {
+			$current_user_groups[] = $question_group;
+			$has_system_group = true;
+			continue;
+		}
+
+		if ( $question_group->system_group == 1 && $question_group->wp_user != $current_user_id ) {
+			//TODO: note.  This is assuming that ONLY one system group is currently in place for EE (personal).  If more system groups are added down the road then this has to be modified (3.2 will have changes to allow for more possible system groups).
+			if ( $has_system_group ) continue;
+			$other_user_groups[] = $question_group;
+			$has_system_group = true;
+			continue;
+		}
+
+		$checked_groups[] = $question_group;
+	}
+
+	if ( !empty($current_user_groups) && $has_system_group ) {
+		$other_user_groups = $current_user_groups;
+	}
+
+	$checked_groups = ( $has_system_group ) ? array_merge($other_user_groups, $checked_groups ) : $checked_groups;
+
+	//this is a fringe case... shouldn't ever be needed but well you know how it goes...
+	if ( !$has_system_group ) {
+		//hth did the event get saved/displayed without at least one system question group?  We better add one into the array.
+		global $wpdb;
+		$sql = "SELECT qg.* FROM " . EVENTS_QST_GROUP_TABLE . " AS qg WHERE qg.system_group = '1' AND ( qg.wp_user = '0' or qg.wp_user = '1' ) ";
+		$default_groups = $wpdb->get_results($wpdb->prepare($sql) );
+		$checked_groups = array_merge($default_groups, $checked_groups);
+	}
+
+	return $checked_groups;
+}
+//todo left off here.  Need to check the final query to make sure that there are no duplicate system groups (and possibly make sure there is at least ONE system group?) If there aren't any system groups then we need to get the defaults and add them.
+
+/** END ADDED BY DARREN **/
 
 
 //This function is previously declared in functions/main.php. Credit goes to Justin Tadlock (http://justintadlock.com/archives/2009/09/18/custom-capabilities-in-plugins-and-themes)
