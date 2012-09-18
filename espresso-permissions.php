@@ -87,6 +87,12 @@ function espresso_manager_install(){
 	    'espresso_event_manager' => true,
 	    'delete_posts' => false, // Use false to explicitly deny
 	));
+
+	//we need to make sure administrator gets all new caps
+	$role = get_role('administrator');
+	$role->add_cap('espresso_group_admin');
+	$role->add_cap('espresso_event_admin');
+	$role->add_cap('espresso_event_manager');
 }
 register_activation_hook(__FILE__,'espresso_manager_install');
 
