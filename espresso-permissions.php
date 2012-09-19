@@ -235,8 +235,8 @@ add_filter('espresso_get_user_questions_for_group_extra_attached', 'espresso_rp_
 //questions
 add_filter('espresso_get_user_questions_where', 'espresso_rp_basic_get_user_questions_where', 10, 3);
 add_filter('espresso_get_user_questions_questions', 'espresso_rp_basic_get_user_questions_questions', 10, 3);
-add_filter('espresso_get_question_groups_for_event_where', 'espresso_rp_basic_get_question_groups_for_event_where', 10, 2);
-add_filter('espresso_get_question_groups_for_event_groups', 'espresso_rp_basic_get_question_groups_for_event_groups', 10, 2);
+add_filter('espresso_get_question_groups_for_event_where', 'espresso_rp_basic_get_question_groups_for_event_where', 10, 3);
+add_filter('espresso_get_question_groups_for_event_groups', 'espresso_rp_basic_get_question_groups_for_event_groups', 10, 3);
 
 function espresso_rp_basic_question_groups_where($where, $user_id, $num) {
 	$modified_where = " WHERE qg.wp_user = '" . $user_id . "' ";
@@ -281,7 +281,7 @@ function espresso_rp_basic_get_user_questions_questions( $questions, $user_id, $
 	return $questions;
 }
 
-function espresso_rp_basic_get_question_groups_for_event_where($where, $existing_question_groups) {
+function espresso_rp_basic_get_question_groups_for_event_where($where, $existing_question_groups, $event) {
 	$modified_where = " WHERE qg.wp_user = '" . get_current_user_id() . "' ";
 
 	//if we've got existing $questions then we want to make sure we're pulling them in.
@@ -292,7 +292,7 @@ function espresso_rp_basic_get_question_groups_for_event_where($where, $existing
 	return $modified_where;
 }
 
-function espresso_rp_basic_get_question_groups_for_event_groups( $event_question_groups, $existing_question_groups ) {
+function espresso_rp_basic_get_question_groups_for_event_groups( $event_question_groups, $existing_question_groups, $event ) {
 	$current_user_groups = array();
 	$other_user_groups = array();
 	$checked_groups = array();
