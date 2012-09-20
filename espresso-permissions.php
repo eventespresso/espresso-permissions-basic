@@ -231,11 +231,12 @@ if (!function_exists('espresso_user_meta')) {
 add_filter('espresso_get_user_question_groups_where', 'espresso_rp_basic_question_groups_where', 10, 3);
 add_filter('espresso_get_user_question_groups_groups', 'espresso_rp_basic_question_groups_groups', 10, 3);
 add_filter('espresso_get_user_questions_for_group', 'espresso_rp_basic_get_user_questions_for_group', 10, 3);
+add_filter('espresso_get_user_questions_for_group_extra_attached', 'espresso_rp_basic_get_user_questions_for_group', 10, 3);
 //questions
 add_filter('espresso_get_user_questions_where', 'espresso_rp_basic_get_user_questions_where', 10, 3);
 add_filter('espresso_get_user_questions_questions', 'espresso_rp_basic_get_user_questions_questions', 10, 3);
-add_filter('espresso_get_question_groups_for_event_where', 'espresso_rp_basic_get_question_groups_for_event_where', 10, 2);
-add_filter('espresso_get_question_groups_for_event_groups', 'espresso_rp_basic_get_question_groups_for_event_groups', 10, 2);
+add_filter('espresso_get_question_groups_for_event_where', 'espresso_rp_basic_get_question_groups_for_event_where', 10, 3);
+add_filter('espresso_get_question_groups_for_event_groups', 'espresso_rp_basic_get_question_groups_for_event_groups', 10, 3);
 
 function espresso_rp_basic_question_groups_where($where, $user_id, $num) {
 	$modified_where = " WHERE qg.wp_user = '" . $user_id . "' ";
@@ -255,7 +256,8 @@ function espresso_rp_basic_question_groups_groups($groups, $user_id, $num) {
 }
 
 function espresso_rp_basic_get_user_questions_for_group( $where, $group_id, $user_id ) {
-	$where .= " AND qg.wp_user = '" . $user_id . "' ";
+		$where = " WHERE 1=1";
+
 	return $where;
 }
 
@@ -267,6 +269,10 @@ function espresso_rp_basic_get_user_questions_where( $where, $user_id, $num ) {
 		$where = $modified_where;
 	}
 
+
+	if ( isset($_REQUEST['action']) && $_REQUEST['action'] == 'new_group' )
+		$where =  "";
+
 	return $where;
 }
 
@@ -275,7 +281,7 @@ function espresso_rp_basic_get_user_questions_questions( $questions, $user_id, $
 	return $questions;
 }
 
-function espresso_rp_basic_get_question_groups_for_event_where($where, $existing_question_groups) {
+function espresso_rp_basic_get_question_groups_for_event_where($where, $existing_question_groups, $event) {
 	$modified_where = " WHERE qg.wp_user = '" . get_current_user_id() . "' ";
 
 	//if we've got existing $questions then we want to make sure we're pulling them in.
@@ -286,7 +292,7 @@ function espresso_rp_basic_get_question_groups_for_event_where($where, $existing
 	return $modified_where;
 }
 
-function espresso_rp_basic_get_question_groups_for_event_groups( $event_question_groups, $existing_question_groups ) {
+function espresso_rp_basic_get_question_groups_for_event_groups( $event_question_groups, $existing_question_groups, $event ) {
 	$current_user_groups = array();
 	$other_user_groups = array();
 	$checked_groups = array();
@@ -329,7 +335,6 @@ function espresso_rp_basic_get_question_groups_for_event_groups( $event_question
 
 	return $checked_groups;
 }
-//todo left off here.  Need to check the final query to make sure that there are no duplicate system groups (and possibly make sure there is at least ONE system group?) If there aren't any system groups then we need to get the defaults and add them.
 
 /** END ADDED BY DARREN **/
 
