@@ -215,18 +215,16 @@ function espresso_member_data($type=''){
 //Core only
 if (!function_exists('espresso_user_meta')) {
 	function espresso_user_meta($user_id, $key){
+		if ( empty( $user_id ) || empty( $key) ) return false; //get out we need valid id or key to be able to do anything.
 		$user = new WP_User( $user_id );
-		//echo "<pre>".print_r($user,true)."</pre>";
-		//print_r($user->data);
-		//echo array_key_exists($key, $user);
-		//echo $user->data->ID;
-		if ($user->data->ID >0 && array_key_exists($key, $user->data)) {
-			return esc_attr($user->$key);
-		}
+		
+		if ( isset( $user->$key ) )
+			return $user->$key;
+		else
+			return false;
 	}
 }
 
-/**  ADDED BY DARREN  **/
 /* These filters are for hooking R&P into the questions/question groups management. They get removed and modified by R&P Pro */
 add_filter('espresso_get_user_question_groups_where', 'espresso_rp_basic_question_groups_where', 10, 3);
 add_filter('espresso_get_user_question_groups_groups', 'espresso_rp_basic_question_groups_groups', 10, 3);
@@ -336,7 +334,6 @@ function espresso_rp_basic_get_question_groups_for_event_groups( $event_question
 	return $checked_groups;
 }
 
-/** END ADDED BY DARREN **/
 
 
 //This function is previously declared in functions/main.php. Credit goes to Justin Tadlock (http://justintadlock.com/archives/2009/09/18/custom-capabilities-in-plugins-and-themes)
