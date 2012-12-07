@@ -75,7 +75,7 @@ function espresso_manager_install(){
 					'event_manager_staff'=>'Y',
 					'event_manager_create_post'=>'Y',
 					'event_manager_share_cats'=>'Y',
-					'minimum_fes_level'=>'espresso_event_manager',
+					'minimum_fem_level'=>'espresso_event_manager',
 				);
 	add_option( 'espresso_manager_settings', $espresso_manager );
 	// add more capabilities to the subscriber role only for this plugin
@@ -434,7 +434,7 @@ function espresso_permissions_config_mnu(){
 		$espresso_manager['event_manager_staff']                = isset( $_POST['event_manager_staff'] ) ? $_POST['event_manager_staff'] : '';
 		$espresso_manager['event_manager_create_post']          = isset( $_POST['event_manager_create_post'] ) ? $_POST['event_manager_create_post'] : '';
 		$espresso_manager['event_manager_share_cats']           = isset( $_POST['event_manager_share_cats'] ) ? $_POST['event_manager_share_cats'] : '';
-		$espresso_manager['minimum_fes_level']           		= isset( $_POST['minimum_fes_level'] ) ? $_POST['minimum_fes_level'] : '';
+		$espresso_manager['minimum_fem_level']           		= isset( $_POST['minimum_fem_level'] ) ? $_POST['minimum_fem_level'] : '';
 
 		update_option( 'espresso_manager_settings', $espresso_manager);
 		add_action( 'admin_notices', 'espresso_manager_updated');
@@ -670,4 +670,3 @@ function espresso_permissions_config_mnu(){
 </div>
 <?php
 }
-
