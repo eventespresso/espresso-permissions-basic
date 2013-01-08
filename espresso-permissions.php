@@ -70,6 +70,7 @@ function espresso_manager_install(){
 					'espresso_manager_personnel_manager' => "administrator",
 					'espresso_manager_ticketing' => "administrator",
 					'espresso_manager_seating' => "administrator",
+					'espresso_system_status' => "administrator",
 					'event_manager_approval' => "N",
 					'event_manager_venue'=>'Y',
 					'event_manager_staff'=>'Y',
@@ -419,8 +420,9 @@ function espresso_permissions_config_mnu(){
 		$espresso_manager['espresso_manager_payment_gateways']  = isset( $_POST['espresso_manager_payment_gateways'] ) ? $_POST['espresso_manager_payment_gateways'] : '';
 		$espresso_manager['espresso_manager_members']           = isset( $_POST['espresso_manager_members'] ) ? $_POST['espresso_manager_members'] : '';
 		$espresso_manager['espresso_manager_calendar']          = isset( $_POST['espresso_manager_calendar'] ) ? $_POST['espresso_manager_calendar'] : '';
-		$espresso_manager['espresso_manager_ticketing']          = isset( $_POST['espresso_manager_ticketing'] ) ? $_POST['espresso_manager_ticketing'] : '';
-		$espresso_manager['espresso_manager_seating']          = isset( $_POST['espresso_manager_seating'] ) ? $_POST['espresso_manager_seating'] : '';
+		$espresso_manager['espresso_manager_ticketing']         = isset( $_POST['espresso_manager_ticketing'] ) ? $_POST['espresso_manager_ticketing'] : '';
+		$espresso_manager['espresso_manager_seating']          	= isset( $_POST['espresso_manager_seating'] ) ? $_POST['espresso_manager_seating'] : '';
+		$espresso_manager['espresso_system_status']       		= isset( $_POST['espresso_system_status'] ) ? $_POST['espresso_system_status'] : '';
 		$espresso_manager['espresso_manager_social']            = isset( $_POST['espresso_manager_social'] ) ? $_POST['espresso_manager_social'] : '';
 		$espresso_manager['espresso_manager_addons']            = isset( $_POST['espresso_manager_addons'] ) ? $_POST['espresso_manager_addons'] : '';
 		$espresso_manager['espresso_manager_support']           = isset( $_POST['espresso_manager_support'] ) ? $_POST['espresso_manager_support'] : '';
@@ -535,111 +537,111 @@ function espresso_permissions_config_mnu(){
                     <td><label for="espresso_manager_general">
                         <?php _e('General Settings Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_general', $values, $espresso_manager['espresso_manager_general']);?></td>
+                    <td><?php echo select_input('espresso_manager_general', $values, isset($espresso_manager['espresso_manager_general']) && !empty($espresso_manager['espresso_manager_general']) ? $espresso_manager['espresso_manager_general'] : '');?></td>
                   </tr>
                   <tr>
                     <td><label for="espresso_manager_events">
                         <?php _e('Event/Attendee Listings Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_events', $values, $espresso_manager['espresso_manager_events']);?></td>
+                    <td><?php echo select_input('espresso_manager_events', $values, isset($espresso_manager['espresso_manager_events']) && !empty($espresso_manager['espresso_manager_events']) ? $espresso_manager['espresso_manager_events'] : '');?></td>
                   </tr>
                   <tr>
                     <td><label for="espresso_manager_categories">
                         <?php _e('Categories Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_categories', $values, $espresso_manager['espresso_manager_categories']);?></td>
+                    <td><?php echo select_input('espresso_manager_categories', $values, isset($espresso_manager['espresso_manager_categories']) && !empty($espresso_manager['espresso_manager_categories']) ? $espresso_manager['espresso_manager_categories'] : '');?></td>
                   </tr>
                   <tr>
                     <td><label for="espresso_manager_discounts">
                         <?php _e('Discounts Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_discounts', $values, $espresso_manager['espresso_manager_discounts']);?></td>
+                    <td><?php echo select_input('espresso_manager_discounts', $values, isset($espresso_manager['espresso_manager_discounts']) && !empty($espresso_manager['espresso_manager_categories']) ? $espresso_manager['espresso_manager_categories'] : '');?></td>
                   </tr>
                   <?php if (function_exists('event_espresso_groupon_config_mnu')) {?>
                   <tr>
                     <td><label for="espresso_manager_groupons">
                         <?php _e('Groupons Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_groupons', $values, $espresso_manager['espresso_manager_groupons']);?></td>
+                    <td><?php echo select_input('espresso_manager_groupons', $values, isset($espresso_manager['espresso_manager_groupons']) && !empty($espresso_manager['espresso_manager_groupons']) ? $espresso_manager['espresso_manager_groupons'] : '');?></td>
                   </tr>
                   <?php }?>
                   <tr>
                     <td><label for="espresso_manager_form_builder">
                         <?php _e('Questions Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_form_builder', $values, $espresso_manager['espresso_manager_form_builder']);?></td>
+                    <td><?php echo select_input('espresso_manager_form_builder', $values, isset($espresso_manager['espresso_manager_form_builder']) && !empty($espresso_manager['espresso_manager_form_builder']) ? $espresso_manager['espresso_manager_form_builder'] : '');?></td>
                   </tr>
                   <tr>
                     <td><label for="espresso_manager_form_groups">
                         <?php _e('Question Groups Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_form_groups', $values, $espresso_manager['espresso_manager_form_groups']);?></td>
+                    <td><?php echo select_input('espresso_manager_form_groups', $values, isset($espresso_manager['espresso_manager_form_groups']) && !empty($espresso_manager['espresso_manager_form_groups']) ? $espresso_manager['espresso_manager_form_groups'] : '');?></td>
                   </tr>
                   <tr>
                     <td><label for="espresso_manager_venue_manager">
                         <?php _e('Venue Manager Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_venue_manager', $values, $espresso_manager['espresso_manager_venue_manager']);?></td>
+                    <td><?php echo select_input('espresso_manager_venue_manager', $values, isset($espresso_manager['espresso_manager_venue_manager']) && !empty($espresso_manager['espresso_manager_venue_manager']) ? $espresso_manager['espresso_manager_venue_manager'] : '');?></td>
                   </tr>
                   <tr>
                     <td><label for="espresso_manager_personnel_manager">
                         <?php _e('Staff Manager Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_personnel_manager', $values, $espresso_manager['espresso_manager_personnel_manager']);?></td>
+                    <td><?php echo select_input('espresso_manager_personnel_manager', $values, isset($espresso_manager['espresso_manager_personnel_manager']) && !empty($espresso_manager['espresso_manager_personnel_manager']) ? $espresso_manager['espresso_manager_personnel_manager'] : '');?></td>
                   </tr>
                   <tr>
                     <td><label for="espresso_manager_event_emails">
                         <?php _e('Email Manager Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_event_emails', $values, $espresso_manager['espresso_manager_event_emails']);?></td>
+                    <td><?php echo select_input('espresso_manager_event_emails', $values, isset($espresso_manager['espresso_manager_event_emails']) && !empty($espresso_manager['espresso_manager_event_emails']) ? $espresso_manager['espresso_manager_event_emails'] : '');?></td>
                   </tr>
                   <tr>
                     <td><label for="espresso_manager_payment_gateways">
                         <?php _e('Payment Settings Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_payment_gateways', $values, $espresso_manager['espresso_manager_payment_gateways']);?></td>
+                    <td><?php echo select_input('espresso_manager_payment_gateways', $values, isset($espresso_manager['espresso_manager_payment_gateways']) && !empty($espresso_manager['espresso_manager_payment_gateways']) ? $espresso_manager['espresso_manager_payment_gateways'] : '');?></td>
                   </tr>
                   <tr>
                     <td><label for="espresso_manager_members">
                         <?php _e('Member Settings Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_members', $values, $espresso_manager['espresso_manager_members']);?></td>
+                    <td><?php echo select_input('espresso_manager_members', $values, isset($espresso_manager['espresso_manager_members']) && !empty($espresso_manager['espresso_manager_members']) ? $espresso_manager['espresso_manager_members'] : '');?></td>
                   </tr>
                   <tr>
                     <td><label for="espresso_manager_calendar">
                         <?php _e('Calendar Settings Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_calendar', $values, $espresso_manager['espresso_manager_calendar']);?></td>
+                    <td><?php echo select_input('espresso_manager_calendar', $values, isset($espresso_manager['espresso_manager_calendar']) && !empty($espresso_manager['espresso_manager_calendar']) ? $espresso_manager['espresso_manager_calendar'] : '');?></td>
                   </tr>
 				  <tr>
                     <td><label for="espresso_manager_ticketing">
                         <?php _e('Ticket Templates','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_ticketing', $values, $espresso_manager['espresso_manager_ticketing']);?></td>
+                    <td><?php echo select_input('espresso_manager_ticketing', $values, isset($espresso_manager['espresso_manager_ticketing']) && !empty($espresso_manager['espresso_manager_ticketing']) ? $espresso_manager['espresso_manager_ticketing'] : '');?></td>
                   </tr>
 				  <tr>
                     <td><label for="espresso_manager_seating">
                         <?php _e('Seating Chart','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_seating', $values, $espresso_manager['espresso_manager_seating']);?></td>
+                    <td><?php echo select_input('espresso_manager_seating', $values, isset($espresso_manager['espresso_manager_seating']) && !empty($espresso_manager['espresso_manager_seating']) ? $espresso_manager['espresso_manager_seating'] : '');?></td>
                   </tr>
                   <tr>
                     <td><label for="espresso_manager_social">
                         <?php _e('Social Media Settings Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_social', $values, $espresso_manager['espresso_manager_social']);?></td>
+                    <td><?php echo select_input('espresso_manager_social', $values, isset($espresso_manager['espresso_manager_social']) && !empty($espresso_manager['espresso_manager_social']) ?$espresso_manager['espresso_manager_social']  : '');?></td>
                   </tr>
-                  <tr>
-                    <td><label for="espresso_manager_addons">
-                        <?php _e('Addons Page','event_espresso'); ?>
+				  <tr>
+                    <td><label for="espresso_system_status">
+                        <?php _e('System Status Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_addons', $values, $espresso_manager['espresso_manager_addons']);?></td>
+                    <td><?php echo select_input('espresso_system_status', $values, isset($espresso_manager['espresso_system_status']) && !empty($espresso_manager['espresso_system_status']) ? $espresso_manager['espresso_system_status'] : '');?></td>
                   </tr>
                   <tr>
                     <td><label for="espresso_manager_support">
                         <?php _e('Support Page','event_espresso'); ?>
                       </label></td>
-                    <td><?php echo select_input('espresso_manager_support', $values, $espresso_manager['espresso_manager_support']);?></td>
+                    <td><?php echo select_input('espresso_manager_support', $values, isset($espresso_manager['espresso_manager_support']) && !empty($espresso_manager['espresso_manager_support']) ? $espresso_manager['espresso_manager_support'] : '');?></td>
                   </tr>
                 </tbody>
               </table>
