@@ -3,11 +3,16 @@
 Plugin Name: Event Espresso - Permissions
 Plugin URI: http://www.eventespresso.com
 Description: Provides support for allowing members of the espreesso_event_admin role to administer events.
-Version: 1.5.4-alpha
+Version: 1.5.4
 Author: Event Espresso
 Author URI: http://www.eventespresso.com
-Copyright 2011  Event Espresso  (email : support@eventespresso.com)
+Copyright 2013  Event Espresso  (email : support@eventespresso.com)
 */
+
+//Define the version of the plugin
+function espresso_manager_version() {
+	return '1.5.4';
+}
 
 //Update notifications
 add_action('action_hook_espresso_permissions_basic_update_api', 'ee_permissions_basic_load_pue_update');
@@ -20,7 +25,7 @@ function ee_permissions_basic_load_pue_update() {
 		require(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php' );
 		$api_key = $org_options['site_license_key'];
 		$host_server_url = 'http://eventespresso.com';
-		$plugin_slug = 'espresso-permissions-basic-pr';
+		$plugin_slug = 'espresso-permissions-basic';
 		$options = array(
 			'apikey' => $api_key,
 			'lang_domain' => 'event_espresso',
@@ -33,10 +38,7 @@ function ee_permissions_basic_load_pue_update() {
 }
 
 include("includes/functions.php");
-//Define the version of the plugin
-function espresso_manager_version() {
-	return '1.5.4-alpha';
-}
+
 define("ESPRESSO_MANAGER_VERSION", espresso_manager_version() );
 
 //Define the plugin directory and path
