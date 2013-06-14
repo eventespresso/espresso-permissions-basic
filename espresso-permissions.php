@@ -10,7 +10,6 @@ Copyright 2011  Event Espresso  (email : support@eventespresso.com)
 */
 
 //Update notifications
-add_action('action_hook_espresso_permissions_basic_update_api', 'ee_permissions_basic_load_pue_update');
 function ee_permissions_basic_load_pue_update() {
 	global $org_options, $espresso_check_for_updates;
 	if ( $espresso_check_for_updates == false )
@@ -31,52 +30,62 @@ function ee_permissions_basic_load_pue_update() {
 		$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //initiate the class and start the plugin update engine!
 	}
 }
+add_action('action_hook_espresso_permissions_basic_update_api', 'ee_permissions_basic_load_pue_update');
 
-include("includes/functions.php");
+
+
+
 //Define the version of the plugin
 function espresso_manager_version() {
 	return '1.5.2';
 }
-define("ESPRESSO_MANAGER_VERSION", espresso_manager_version() );
 
+define("ESPRESSO_MANAGER_VERSION", espresso_manager_version() );
 //Define the plugin directory and path
 define("ESPRESSO_MANAGER_PLUGINPATH", "/" . plugin_basename( dirname(__FILE__) ) . "/");
 define("ESPRESSO_MANAGER_PLUGINFULLPATH", WP_PLUGIN_DIR . ESPRESSO_MANAGER_PLUGINPATH  );
 define("ESPRESSO_MANAGER_PLUGINFULLURL", WP_PLUGIN_URL . ESPRESSO_MANAGER_PLUGINPATH );
 
+
+
+include("includes/functions.php");
+
 //Globals
 global $espresso_manager;
 $espresso_manager = get_option('espresso_manager_settings');
+
+
+
 
 //Install the plugin
 function espresso_manager_install(){
 	//Install Event Manager Options
 	$espresso_manager = array(
-					'espresso_manager_general' => "administrator",
-					'espresso_manager_events' => "administrator",
-					'espresso_manager_categories' => "administrator",
-					'espresso_manager_discounts' => "administrator",
-					'espresso_manager_groupons' => "administrator",
-					'espresso_manager_form_builder' => "administrator",
-					'espresso_manager_form_groups' => "administrator",
-					'espresso_manager_event_emails' => "administrator",
-					'espresso_manager_payment_gateways' => "administrator",
-					'espresso_manager_members' => "administrator",
-					'espresso_manager_calendar' => "administrator",
-					'espresso_manager_social' => "administrator",
-					'espresso_manager_addons' => "administrator",
-					'espresso_manager_support' => "administrator",
-					'espresso_manager_venue_manager' => "administrator",
-					'espresso_manager_personnel_manager' => "administrator",
-					'espresso_manager_ticketing' => "administrator",
-					'espresso_manager_seating' => "administrator",
-					'event_manager_approval' => "N",
-					'event_manager_venue'=>'Y',
-					'event_manager_staff'=>'Y',
-					'event_manager_create_post'=>'Y',
-					'event_manager_share_cats'=>'Y',
-					'minimum_fem_level'=>'espresso_event_manager',
-				);
+		'espresso_manager_general' => "administrator",
+		'espresso_manager_events' => "administrator",
+		'espresso_manager_categories' => "administrator",
+		'espresso_manager_discounts' => "administrator",
+		'espresso_manager_groupons' => "administrator",
+		'espresso_manager_form_builder' => "administrator",
+		'espresso_manager_form_groups' => "administrator",
+		'espresso_manager_event_emails' => "administrator",
+		'espresso_manager_payment_gateways' => "administrator",
+		'espresso_manager_members' => "administrator",
+		'espresso_manager_calendar' => "administrator",
+		'espresso_manager_social' => "administrator",
+		'espresso_manager_addons' => "administrator",
+		'espresso_manager_support' => "administrator",
+		'espresso_manager_venue_manager' => "administrator",
+		'espresso_manager_personnel_manager' => "administrator",
+		'espresso_manager_ticketing' => "administrator",
+		'espresso_manager_seating' => "administrator",
+		'event_manager_approval' => "N",
+		'event_manager_venue'=>'Y',
+		'event_manager_staff'=>'Y',
+		'event_manager_create_post'=>'Y',
+		'event_manager_share_cats'=>'Y',
+		'minimum_fem_level'=>'espresso_event_manager',
+	);
 	add_option( 'espresso_manager_settings', $espresso_manager );
 	// add more capabilities to the subscriber role only for this plugin
 	$result = add_role('espresso_event_admin', 'Espresso Master Admin', array(
@@ -97,7 +106,7 @@ function espresso_manager_install(){
 register_activation_hook(__FILE__,'espresso_manager_install');
 
 
-add_action( 'action_hook_espresso_permissions', 'espresso_permissions_run', 20 );
+
 // IMPORTANT: added the bellow add_action in init because the above add action doesn't work. Because, espresso core loads before this
 // and the do_action call fails because this add_action wasn't loaded.
 if ( !function_exists('espresso_is_admin')) {
@@ -166,6 +175,9 @@ function espresso_permissions_run(){
 	}
 
 }
+add_action( 'action_hook_espresso_permissions', 'espresso_permissions_run', 20 );
+
+
 
 //Checks to see if a user has permissions to view an event.
 //Overridden in pro
@@ -211,6 +223,8 @@ function espresso_member_data($type=''){
 	}
 }
 
+
+
 //Returns the user meta
 //Core only
 if (!function_exists('espresso_user_meta')) {
@@ -226,6 +240,8 @@ if (!function_exists('espresso_user_meta')) {
 	}
 }
 
+
+
 /**  ADDED BY DARREN  **/
 /* These filters are for hooking R&P into the questions/question groups management. They get removed and modified by R&P Pro */
 add_filter('espresso_get_user_question_groups_where', 'espresso_rp_basic_question_groups_where', 10, 3);
@@ -237,6 +253,8 @@ add_filter('espresso_get_user_questions_where', 'espresso_rp_basic_get_user_ques
 add_filter('espresso_get_user_questions_questions', 'espresso_rp_basic_get_user_questions_questions', 10, 3);
 add_filter('espresso_get_question_groups_for_event_where', 'espresso_rp_basic_get_question_groups_for_event_where', 10, 3);
 add_filter('espresso_get_question_groups_for_event_groups', 'espresso_rp_basic_get_question_groups_for_event_groups', 10, 3);
+
+
 
 function espresso_rp_basic_question_groups_where($where, $user_id, $num) {
 	$modified_where = " WHERE qg.wp_user = '" . $user_id . "' ";
@@ -250,16 +268,22 @@ function espresso_rp_basic_question_groups_where($where, $user_id, $num) {
 	return $where;
 }
 
+
+
 //currently doing nothing with the filter.  Just a placeholder for now.
 function espresso_rp_basic_question_groups_groups($groups, $user_id, $num) {
 	return $groups;
 }
+
+
 
 function espresso_rp_basic_get_user_questions_for_group( $where, $group_id, $user_id ) {
 		$where = " WHERE 1=1";
 
 	return $where;
 }
+
+
 
 function espresso_rp_basic_get_user_questions_where( $where, $user_id, $num ) {
 	$modified_where = " WHERE q.wp_user = '" . $user_id . "' ";
@@ -276,10 +300,14 @@ function espresso_rp_basic_get_user_questions_where( $where, $user_id, $num ) {
 	return $where;
 }
 
+
+
 //currently just a placeholder
 function espresso_rp_basic_get_user_questions_questions( $questions, $user_id, $num ) {
 	return $questions;
 }
+
+
 
 function espresso_rp_basic_get_question_groups_for_event_where($where, $existing_question_groups, $event) {
 	$modified_where = " WHERE qg.wp_user = '" . get_current_user_id() . "' ";
@@ -291,6 +319,8 @@ function espresso_rp_basic_get_question_groups_for_event_where($where, $existing
 
 	return $modified_where;
 }
+
+
 
 function espresso_rp_basic_get_question_groups_for_event_groups( $event_question_groups, $existing_question_groups, $event ) {
 	$current_user_groups = array();
@@ -336,9 +366,9 @@ function espresso_rp_basic_get_question_groups_for_event_groups( $event_question
 	return $checked_groups;
 }
 
+
+
 /** END ADDED BY DARREN **/
-
-
 //This function is previously declared in functions/main.php. Credit goes to Justin Tadlock (http://justintadlock.com/archives/2009/09/18/custom-capabilities-in-plugins-and-themes)
 //This function simply returns a custom capability, nothing else. Can be used to change admin capability of the Event Manager menu without the admin losing rights to certain menus.
 //Core only
@@ -348,6 +378,8 @@ if (!function_exists('espresso_management_capability')) {
 	}
 	add_filter( 'espresso_management_capability', 'espresso_management_capability', 10, 3 );
 }
+
+
 
 //Add a settings link to the Plugins page, so people can go straight from the plugin page to the settings page.
 //Core only
@@ -383,6 +415,9 @@ function espresso_permissions_roles_mnu(){
 <?php
 }
 
+
+
+
 function espresso_permissions_newroles_mnu(){
 	global $wpdb, $espresso_manager, $wp_roles;
 	//Debug
@@ -400,6 +435,8 @@ function espresso_permissions_newroles_mnu(){
 </div>
 <?php
 }
+
+
 
 function espresso_permissions_config_mnu(){
 
@@ -670,3 +707,18 @@ function espresso_permissions_config_mnu(){
 </div>
 <?php
 }
+
+
+
+/**
+ *         captures plugin activation errors for debugging
+ *
+ *         @access public
+ *         @return void
+ */
+function espresso_permissions_plugin_activation_errors() {
+    if ( WP_DEBUG === TRUE ) {
+        file_put_contents( WP_CONTENT_DIR. '/uploads/espresso/logs/espresso_permissions_plugin_activation_errors.html', ob_get_contents() );
+    }    
+}
+add_action('activated_plugin', 'espresso_permissions_plugin_activation_errors'); 
