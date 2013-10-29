@@ -335,7 +335,7 @@ function espresso_rp_basic_get_question_groups_for_event_groups( $event_question
 		//hth did the event get saved/displayed without at least one system question group?  We better add one into the array.
 		global $wpdb;
 		$sql = "SELECT qg.* FROM " . EVENTS_QST_GROUP_TABLE . " AS qg WHERE qg.system_group = '1' AND ( qg.wp_user = '0' or qg.wp_user = '1' ) ";
-		$default_groups = $wpdb->get_results($wpdb->prepare($sql) );
+		$default_groups = $wpdb->get_results($wpdb->prepare($sql,'') );
 		$checked_groups = array_merge($default_groups, $checked_groups);
 	}
 
