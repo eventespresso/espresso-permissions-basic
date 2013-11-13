@@ -9,10 +9,9 @@ if ( empty( $members ) ) {
 }
 
 $avail_roles = array();
-$users_of_blog = get_users_of_blog();
+$users_of_blog = get_users();
 foreach ( (array)$users_of_blog as $blog_user ) {
-	$meta_values = unserialize( $blog_user->meta_value );
-	foreach ( ( array) $meta_values as $role => $value ) {
+	foreach ( $blog_user->roles as $role ) {
 		if ( !isset( $avail_roles[$role] ) )	$avail_roles[$role] = 0;
 		++$avail_roles[$role];
 	}
