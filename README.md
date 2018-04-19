@@ -1,7 +1,7 @@
 ## Espresso Permissions Basic
 
 This is an add-on for Event Espresso 3.1 (or legacy EE)
-http://eventespresso.com
+https://eventespresso.com
 
 ## VERY IMPORTANT
 
